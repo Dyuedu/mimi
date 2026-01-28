@@ -1,0 +1,11 @@
+/* Layout Styles */
+.app-layout {
+  min-height: 100vh;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-main-content {
+  flex: 1;
+}

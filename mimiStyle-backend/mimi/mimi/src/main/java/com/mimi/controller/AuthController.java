@@ -1,5 +1,6 @@
 package com.mimi.controller;
 
+import com.mimi.dto.request.LoginRequest;
 import com.mimi.dto.request.RegisterRequest;
 import com.mimi.dto.response.UserResponse;
 import com.mimi.service.AuthService;
@@ -23,6 +24,16 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.CREATED).body(user);
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
+        try {
+            UserResponse user = authService.login(request);
+            return ResponseEntity.ok(user);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
         }
     }
 }

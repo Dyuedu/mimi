@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Eye,
   EyeOff,
@@ -14,7 +15,8 @@ import loginIllustration from '../assets/login-illustration.svg';
 import { registerAccount } from '../api/auth';
 import '../styles/RegisterPage.css';
 
-export default function RegisterPage({ onLoginClick }) {
+export default function RegisterPage() {
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -84,9 +86,7 @@ export default function RegisterPage({ onLoginClick }) {
       });
 
       alert('Đăng ký thành công! Hãy đăng nhập để tiếp tục.');
-      if (typeof onLoginClick === 'function') {
-        onLoginClick();
-      }
+      navigate('/login');
     } catch (error) {
       alert(error.message || 'Đăng ký thất bại, vui lòng thử lại.');
     } finally {
@@ -103,11 +103,7 @@ export default function RegisterPage({ onLoginClick }) {
   };
 
   const handleLogin = () => {
-    if (typeof onLoginClick === 'function') {
-      onLoginClick();
-    } else {
-      console.log('Navigate to login');
-    }
+    navigate('/login');
   };
 
   const handleBackToAccount = () => {

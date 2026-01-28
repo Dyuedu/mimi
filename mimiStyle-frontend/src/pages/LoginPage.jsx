@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import loginIllustration from '../assets/login-illustration.svg';
+import { loginAccount } from '../api/auth';
 import '../styles/LoginPage.css';
 
-export default function LoginPage({ onRegisterClick }) {
+export default function LoginPage() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
@@ -12,17 +15,52 @@ export default function LoginPage({ onRegisterClick }) {
     password: '',
   });
 
+  // Check if already logged in
+  useEffect(() => {
+    const savedUser = sessionStorage.getItem('user');
+    if (savedUser) {
+      navigate('/home', { replace: true });
+      return;
+    }
+
+    // Load saved credentials if Remember me was checked
+    const savedEmail = localStorage.getItem('rememberedEmail');
+    const savedRememberMe = localStorage.getItem('rememberMe') === 'true';
+    if (savedEmail && savedRememberMe) {
+      setFormData(prev => ({ ...prev, email: savedEmail }));
+      setRememberMe(true);
+    }
+  }, [navigate]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    
-    // TODO: Implement login logic
-    console.log('Login:', formData);
-    
-    // Simulate API call
-    setTimeout(() => {
+
+    try {
+      const user = await loginAccount({
+        email: formData.email,
+        password: formData.password,
+      });
+
+      // Handle Remember me
+      if (rememberMe) {
+        localStorage.setItem('rememberedEmail', formData.email);
+        localStorage.setItem('rememberMe', 'true');
+      } else {
+        localStorage.removeItem('rememberedEmail');
+        localStorage.removeItem('rememberMe');
+      }
+
+      // Save user info to sessionStorage
+      sessionStorage.setItem('user', JSON.stringify(user));
+
+      // Navigate to home page
+      navigate('/home', { replace: true });
+    } catch (error) {
+      alert(error.message || 'Đăng nhập thất bại, vui lòng thử lại.');
+    } finally {
       setIsLoading(false);
-    }, 2000);
+    }
   };
 
   const handleInputChange = (e) => {
@@ -38,16 +76,11 @@ export default function LoginPage({ onRegisterClick }) {
   };
 
   const handleRegister = () => {
-    if (typeof onRegisterClick === 'function') {
-      onRegisterClick();
-    } else {
-      console.log('Navigate to register');
-    }
+    navigate('/register');
   };
 
   const handleNavigation = (path) => {
-    // TODO: Implement navigation
-    console.log('Navigate to:', path);
+    navigate(path);
   };
 
   return (
@@ -60,7 +93,13 @@ export default function LoginPage({ onRegisterClick }) {
             <span className="logo-text">MiMi</span>
           </div>
           <nav className="nav-menu">
-            <button className="nav-link">Trang chủ</button>
+            <button
+              className="nav-link"
+              type="button"
+              onClick={() => handleNavigation('/')}
+            >
+              Trang chủ
+            </button>
             <button className="nav-link">Cửa hàng</button>
             <button className="nav-link">Về chúng tôi</button>
             <button className="nav-link">Liên hệ</button>
