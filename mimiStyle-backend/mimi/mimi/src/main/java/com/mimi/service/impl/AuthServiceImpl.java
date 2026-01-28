@@ -50,6 +50,7 @@ public class AuthServiceImpl implements AuthService {
                 .birthday(saved.getBirthday())
                 .phoneNumber(saved.getPhoneNumber())
                 .address(saved.getAddress())
+                       .avatarUrl(saved.getAvatarUrl())
                 .role(saved.getRole())
                 .build();
     }
@@ -71,6 +72,7 @@ public class AuthServiceImpl implements AuthService {
                 .birthday(user.getBirthday())
                 .phoneNumber(user.getPhoneNumber())
                 .address(user.getAddress())
+                       .avatarUrl(user.getAvatarUrl())
                 .role(user.getRole())
                 .build();
     }

@@ -56,11 +56,21 @@ export default function Header() {
           <span className="app-logo-text">MiMi</span>
         </div>
         <nav className="app-nav-menu">
-          <button className="app-nav-link">Trang Chủ</button>
-          <button className="app-nav-link">Sản Phẩm Bán</button>
-          <button className="app-nav-link">Sản Phẩm Thuê</button>
-          <button className="app-nav-link">Giới Thiệu</button>
-          <button className="app-nav-link">Liên Hệ</button>
+          <button className="app-nav-link" type="button" onClick={() => navigate('/home')}>
+            Trang Chủ
+          </button>
+          <button className="app-nav-link" type="button">
+            Sản Phẩm Bán
+          </button>
+          <button className="app-nav-link" type="button">
+            Sản Phẩm Thuê
+          </button>
+          <button className="app-nav-link" type="button">
+            Giới Thiệu
+          </button>
+          <button className="app-nav-link" type="button">
+            Liên Hệ
+          </button>
         </nav>
         <div className="app-user-profile-wrapper" ref={dropdownRef}>
           <div className="app-user-profile" onClick={toggleDropdown}>
@@ -81,7 +91,14 @@ export default function Header() {
               </div>
               <div className="app-dropdown-divider"></div>
               <div className="app-dropdown-menu">
-                <button className="app-dropdown-item">
+                <button
+                  className="app-dropdown-item"
+                  type="button"
+                  onClick={() => {
+                    setShowDropdown(false);
+                    navigate('/profile');
+                  }}
+                >
                   <Users className="app-dropdown-icon" size={20} />
                   <span>Xem tất cả trang cá nhân</span>
                   <ChevronRight className="app-dropdown-chevron" size={16} />

@@ -17,6 +17,7 @@ public class UserResponse {
     private LocalDate birthday;
     private String phoneNumber;
     private String address;
+    private String avatarUrl;
     private Role role;
 }
 
