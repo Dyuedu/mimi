@@ -2,8 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Users, ShoppingCart, Package, Settings, LogOut, ChevronRight } from 'lucide-react';
 import '../../styles/Header.css';
-
-const API_ORIGIN = import.meta.env.VITE_API_ORIGIN || 'http://localhost:8080';
+ import { API_ORIGIN } from '../../api/config';
 
 export default function Header() {
   const navigate = useNavigate();

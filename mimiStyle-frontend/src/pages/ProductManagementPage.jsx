@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Layout from '../components/layout/Layout';
 import { getUserProducts, deleteProduct } from '../api/product';
 import '../styles/ProductManagementPage.css';
 
@@ -8,7 +9,7 @@ const ProductManagementPage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Mock user ID - trong thực tế sẽ lấy từ authentication context
+  // Tạm thời mock user ID - sau này sẽ lấy từ user trong session
   const userId = 1;
 
   useEffect(() => {
@@ -123,29 +124,10 @@ const ProductManagementPage = () => {
     return unitMap[unit] || 'tháng';
   };
 
-  if (loading) {
-    return <div className="loading">Đang tải...</div>;
-  }
-
-  return (
-    <div className="product-management">
-      <header className="header">
-        <div className="header-content">
-          <div className="logo">
-            <span className="logo-icon">📱</span>
-            <span className="logo-text">MIMI</span>
-          </div>
-          <nav className="nav">
-            <a href="/">Trang chủ</a>
-            <a href="/products" className="active">Sản phẩm</a>
-          </nav>
-          <div className="user-info">
-            <span>Duy Anh</span>
-            <div className="avatar">👤</div>
-          </div>
-        </div>
-      </header>
-
+  const content = loading ? (
+    <div className="loading">Đang tải...</div>
+  ) : (
+    <>
       <main className="main-content">
         <div className="page-header">
           <h1>Quản lý sản phẩm</h1>
@@ -215,7 +197,7 @@ const ProductManagementPage = () => {
           <span className="nav-icon">💰</span>
           <span className="nav-text">Doanh thu</span>
         </a>
-        <a href="/selling" className="nav-item active">
+        <a href="/products" className="nav-item active">
           <span className="nav-icon">🛒</span>
           <span className="nav-text">Đang bán</span>
         </a>
@@ -224,7 +206,15 @@ const ProductManagementPage = () => {
           <span className="nav-text">Thêm mới</span>
         </a>
       </nav>
-    </div>
+    </>
+  );
+
+  return (
+    <Layout>
+      <div className="product-management">
+        {content}
+      </div>
+    </Layout>
   );
 };
 

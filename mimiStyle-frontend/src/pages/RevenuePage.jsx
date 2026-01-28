@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Filter } from 'lucide-react';
+import Layout from '../components/layout/Layout';
 import { getRevenueSummary, getSoldProducts } from '../api/revenue';
 import '../styles/RevenuePage.css';
 
@@ -75,30 +76,10 @@ const RevenuePage = () => {
     return date.toLocaleDateString('vi-VN');
   };
 
-  if (loading) {
-    return <div className="loading">Đang tải...</div>;
-  }
-
-  return (
-    <div className="revenue-page">
-      <header className="header">
-        <div className="header-content">
-          <div className="logo">
-            <span className="logo-icon">📱</span>
-            <span className="logo-text">MIMI</span>
-          </div>
-          <nav className="nav">
-            <a href="/">Trang chủ</a>
-            <a href="/products">Sản phẩm</a>
-            <a href="/revenue" className="active">Quản lý</a>
-          </nav>
-          <div className="user-info">
-            <span>Duy Anh</span>
-            <div className="avatar">👤</div>
-          </div>
-        </div>
-      </header>
-
+  const content = loading ? (
+    <div className="loading">Đang tải...</div>
+  ) : (
+    <>
       <main className="main-content">
         <div className="revenue-container">
           {/* Left Panel - Filters & Summary */}
@@ -248,7 +229,15 @@ const RevenuePage = () => {
           <span className="nav-text">Thêm mới</span>
         </a>
       </nav>
-    </div>
+    </>
+  );
+
+  return (
+    <Layout>
+      <div className="revenue-page">
+        {content}
+      </div>
+    </Layout>
   );
 };
 

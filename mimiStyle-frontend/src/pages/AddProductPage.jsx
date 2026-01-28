@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Upload, MapPin } from 'lucide-react';
+import Layout from '../components/layout/Layout';
 import { createProduct } from '../api/product';
 import '../styles/AddProductPage.css';
 
@@ -150,26 +151,8 @@ const AddProductPage = () => {
     }
   };
 
-  return (
-    <div className="add-product-page">
-      <header className="header">
-        <div className="header-content">
-          <div className="logo">
-            <span className="logo-icon">📱</span>
-            <span className="logo-text">MIMI</span>
-          </div>
-          <nav className="nav">
-            <a href="/">Trang chủ</a>
-            <a href="/products">Sản phẩm</a>
-            <a href="/add" className="active">Đăng bán</a>
-          </nav>
-          <div className="user-info">
-            <span>Duy Anh</span>
-            <div className="avatar">👤</div>
-          </div>
-        </div>
-      </header>
-
+  const content = (
+    <>
       <main className="main-content">
         <div className="page-header">
           <h1>Thêm Sản Phẩm Mới</h1>
@@ -467,7 +450,7 @@ const AddProductPage = () => {
           <span className="nav-icon">💰</span>
           <span className="nav-text">Doanh thu</span>
         </a>
-        <a href="/selling" className="nav-item">
+        <a href="/products" className="nav-item">
           <span className="nav-icon">🛒</span>
           <span className="nav-text">Đang bán</span>
         </a>
@@ -476,7 +459,15 @@ const AddProductPage = () => {
           <span className="nav-text">Thêm mới</span>
         </a>
       </nav>
-    </div>
+    </>
+  );
+
+  return (
+    <Layout>
+      <div className="add-product-page">
+        {content}
+      </div>
+    </Layout>
   );
 };
 

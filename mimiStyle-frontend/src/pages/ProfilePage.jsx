@@ -2,9 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import { getUserById, updateUser, uploadAvatar } from '../api/user';
+import { API_ORIGIN } from '../api/config';
 import '../styles/ProfilePage.css';
-
-const API_ORIGIN = import.meta.env.VITE_API_ORIGIN || 'http://localhost:8080';
 
 export default function ProfilePage() {
   const navigate = useNavigate();
