@@ -6,6 +6,7 @@ import HomePage from './pages/HomePage';
 import ProductManagementPage from './pages/ProductManagementPage';
 import AddProductPage from './pages/AddProductPage';
 import RevenuePage from './pages/RevenuePage';
+import ProfilePage from './pages/ProfilePage';
 import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 
@@ -45,6 +46,14 @@ function App() {
           element={
             <ProtectedRoute>
               <RevenuePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
             </ProtectedRoute>
           }
         />

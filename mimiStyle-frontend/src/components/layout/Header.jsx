@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Users, ShoppingCart, Package, Settings, LogOut, ChevronRight } from 'lucide-react';
 import '../../styles/Header.css';
 
+const API_ORIGIN = import.meta.env.VITE_API_ORIGIN || 'http://localhost:8080';
+
 export default function Header() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -10,14 +12,35 @@ export default function Header() {
   const dropdownRef = useRef(null);
 
   useEffect(() => {
-    const savedUser = sessionStorage.getItem('user');
-    if (savedUser) {
+    const syncUserFromSession = () => {
+      const savedUser = sessionStorage.getItem('user');
+      if (!savedUser) {
+        setUser(null);
+        return;
+      }
       try {
         setUser(JSON.parse(savedUser));
       } catch (e) {
-        // Invalid user data
+        setUser(null);
       }
-    }
+    };
+
+    syncUserFromSession();
+
+    // Same-tab updates: ProfilePage dispatches this event after saving user into sessionStorage
+    const onUserUpdated = () => syncUserFromSession();
+    window.addEventListener('mimi:user-updated', onUserUpdated);
+
+    // Cross-tab updates (if any)
+    const onStorage = (evt) => {
+      if (evt.key === 'user') syncUserFromSession();
+    };
+    window.addEventListener('storage', onStorage);
+
+    return () => {
+      window.removeEventListener('mimi:user-updated', onUserUpdated);
+      window.removeEventListener('storage', onStorage);
+    };
   }, []);
 
   // Close dropdown when clicking outside
@@ -56,16 +79,34 @@ export default function Header() {
           <span className="app-logo-text">MiMi</span>
         </div>
         <nav className="app-nav-menu">
-          <button className="app-nav-link">Trang Chủ</button>
-          <button className="app-nav-link">Sản Phẩm Bán</button>
-          <button className="app-nav-link">Sản Phẩm Thuê</button>
-          <button className="app-nav-link">Giới Thiệu</button>
-          <button className="app-nav-link">Liên Hệ</button>
+          <button className="app-nav-link" type="button" onClick={() => navigate('/home')}>
+            Trang Chủ
+          </button>
+          <button className="app-nav-link" type="button">
+            Sản Phẩm Bán
+          </button>
+          <button className="app-nav-link" type="button">
+            Sản Phẩm Thuê
+          </button>
+          <button className="app-nav-link" type="button">
+            Giới Thiệu
+          </button>
+          <button className="app-nav-link" type="button">
+            Liên Hệ
+          </button>
         </nav>
         <div className="app-user-profile-wrapper" ref={dropdownRef}>
           <div className="app-user-profile" onClick={toggleDropdown}>
             <div className="app-user-avatar">
-              {user?.fullName?.charAt(0)?.toUpperCase() || 'U'}
+              {user?.avatarUrl ? (
+                <img
+                  className="app-user-avatar-img"
+                  src={`${API_ORIGIN}/uploads/avatars/${user.avatarUrl}`}
+                  alt="Avatar"
+                />
+              ) : (
+                (user?.fullName?.charAt(0)?.toUpperCase() || 'U')
+              )}
             </div>
             <span className="app-user-name">{user?.fullName || 'Người dùng'}</span>
           </div>
@@ -75,17 +116,26 @@ export default function Header() {
             <div className="app-user-dropdown">
               <div className="app-dropdown-header">
                 <div className="app-dropdown-avatar">
-                  {user?.fullName?.charAt(0)?.toUpperCase() || 'U'}
+                  {user?.avatarUrl ? (
+                    <img
+                      className="app-user-avatar-img"
+                      src={`${API_ORIGIN}/uploads/avatars/${user.avatarUrl}`}
+                      alt="Avatar"
+                    />
+                  ) : (
+                    (user?.fullName?.charAt(0)?.toUpperCase() || 'U')
+                  )}
                 </div>
                 <span className="app-dropdown-name">{user?.fullName || 'Người dùng'}</span>
               </div>
               <div className="app-dropdown-divider"></div>
               <div className="app-dropdown-menu">
-                <button 
+                <button
                   className="app-dropdown-item"
+                  type="button"
                   onClick={() => {
-                    // TODO: Navigate to profile page
                     setShowDropdown(false);
+                    navigate('/profile');
                   }}
                 >
                   <Users className="app-dropdown-icon" size={20} />
