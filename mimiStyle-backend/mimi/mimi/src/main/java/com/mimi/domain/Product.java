@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -60,6 +61,20 @@ public class Product {
     
     @Column(name = "address_contact")
     private String addressContact;
+    
+    @Column(name = "is_featured")
+    private Boolean featured = false;
+    
+    @Column(name = "is_new")
+    private Boolean isNew = false;
+    
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+    
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
     
     // Relationships - Add @JsonIgnore to prevent circular reference
     @JsonIgnore

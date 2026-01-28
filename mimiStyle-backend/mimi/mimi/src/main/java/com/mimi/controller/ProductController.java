@@ -28,6 +28,15 @@ public class ProductController {
         return ResponseEntity.ok(productResponses);
     }
 
+    @GetMapping
+    public ResponseEntity<List<ProductResponse>> getAllProducts() {
+        List<Product> products = productService.getAllProducts();
+        List<ProductResponse> productResponses = products.stream()
+                .map(this::mapToProductResponse)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(productResponses);
+    }
+
     @PostMapping
     public ResponseEntity<?> createProduct(@RequestBody Product product) {
         try {
@@ -116,6 +125,9 @@ public class ProductController {
         response.setRentUnit(product.getRentUnit());
         response.setStatus(product.getStatus());
         response.setAddressContact(product.getAddressContact());
+        response.setFeatured(product.getFeatured());
+        response.setIsNew(product.getIsNew());
+        response.setCreatedAt(product.getCreatedAt());
         
         if (product.getSeller() != null) {
             response.setSellerId(product.getSeller().getId());

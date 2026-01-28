@@ -109,3 +109,18 @@ export async function deleteProduct(id) {
     throw new Error('Không thể xóa sản phẩm');
   }
 }
+
+export async function getAllProducts() {
+  const response = await fetch(`${API_BASE_URL}/products`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Không thể tải danh sách sản phẩm');
+  }
+
+  return response.json();
+}

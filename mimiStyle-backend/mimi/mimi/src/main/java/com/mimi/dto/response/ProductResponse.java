@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -23,6 +24,9 @@ public class ProductResponse {
     private RentUnit rentUnit;
     private ProductStatus status;
     private String addressContact;
+    private Boolean featured;
+    private Boolean isNew;
+    private LocalDateTime createdAt;
     
     // Seller info
     private Long sellerId;
