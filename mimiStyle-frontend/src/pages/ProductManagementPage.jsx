@@ -36,6 +36,7 @@ const ProductManagementPage = () => {
   const [editSubmitError, setEditSubmitError] = useState('');
   const [editSuccessMessage, setEditSuccessMessage] = useState('');
   const [user, setUser] = useState(null);
+  const [filterType, setFilterType] = useState('all'); // 'all' | 'sale' | 'rent'
 
   const userId = user?.id ?? user?.userId ?? null;
 
@@ -358,6 +359,25 @@ const ProductManagementPage = () => {
 
   if (!user) return null;
 
+  const filteredProducts = (() => {
+    if (filterType === 'all') return products;
+    if (filterType === 'sale') {
+      return products.filter(
+        (p) =>
+          p.tradeType === 'BUY_ONLY' ||
+          (p.tradeType === 'BOTH' && p.buyPrice != null && Number(p.buyPrice) > 0)
+      );
+    }
+    if (filterType === 'rent') {
+      return products.filter(
+        (p) =>
+          p.tradeType === 'RENT_ONLY' ||
+          (p.tradeType === 'BOTH' && p.rentPrice != null && Number(p.rentPrice) > 0)
+      );
+    }
+    return products;
+  })();
+
   const content = loading ? (
     <div className="loading">Đang tải...</div>
   ) : (
@@ -368,8 +388,32 @@ const ProductManagementPage = () => {
           <p className="subtitle">Sản phẩm đang bán/cho thuê</p>
         </div>
 
+        <div className="product-management-filters" style={{ marginLeft: '78px' }}>
+          <button
+            type="button"
+            className={`product-management-filter-btn ${filterType === 'all' ? 'active' : ''}`}
+            onClick={() => setFilterType('all')}
+          >
+            Tất cả
+          </button>
+          <button
+            type="button"
+            className={`product-management-filter-btn ${filterType === 'sale' ? 'active' : ''}`}
+            onClick={() => setFilterType('sale')}
+          >
+            Sản phẩm bán
+          </button>
+          <button
+            type="button"
+            className={`product-management-filter-btn ${filterType === 'rent' ? 'active' : ''}`}
+            onClick={() => setFilterType('rent')}
+          >
+            Sản phẩm cho thuê
+          </button>
+        </div>
+
         <div className="products-grid">
-          {products.map(product => (
+          {filteredProducts.map(product => (
             <div key={product.id} className="product-card">
               <div className="product-card-inner">
                 <div className="product-thumb">

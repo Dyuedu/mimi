@@ -11,6 +11,7 @@ import ProfilePage from './pages/ProfilePage';
 import CheckoutPage from './pages/CheckoutPage';
 import CheckoutPaymentPage from './pages/CheckoutPaymentPage';
 import OrderHistoryPage from './pages/OrderHistoryPage';
+import RentProductsPage from './pages/RentProductsPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import ErrorBoundary from './components/ErrorBoundary';
 import './App.css';
@@ -36,6 +37,14 @@ function App() {
           element={
             <ProtectedRoute>
               <ProductManagementPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/rent"
+          element={
+            <ProtectedRoute>
+              <RentProductsPage />
             </ProtectedRoute>
           }
         />

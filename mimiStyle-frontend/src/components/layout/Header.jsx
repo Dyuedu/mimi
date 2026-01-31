@@ -95,10 +95,7 @@ export default function Header() {
             Trang Chủ
           </button>
           <button className="app-nav-link" type="button" onClick={() => navigate('/products')}>
-            Sản Phẩm Bán
-          </button>
-          <button className="app-nav-link" type="button">
-            Sản Phẩm Thuê
+            Quản lý sản phẩm
           </button>
           <button className="app-nav-link" type="button">
             Giới Thiệu

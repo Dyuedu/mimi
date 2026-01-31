@@ -31,6 +31,47 @@
   margin: 0;
 }
 
+/* Filter Buttons - thẳng hàng với cạnh trái thẻ sản phẩm */
+.product-management-filters {
+  display: flex;
+  gap: 0;
+  margin-bottom: 24px;
+  background: #fff;
+  padding: 4px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  width: fit-content;
+  border: 1px solid #e5e7eb;
+}
+
+.product-management-filter-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.product-management-filter-btn:hover {
+  color: #6366f1;
+  background: #f1f5f9;
+}
+
+.product-management-filter-btn.active {
+  color: #fff;
+  background: #6366f1;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.35);
+}
+
+.product-management-filter-btn.active:hover {
+  background: #5856eb;
+  box-shadow: 0 3px 12px rgba(99, 102, 241, 0.4);
+}
+
 /* Products Grid */
 .products-grid {
   display: grid;
