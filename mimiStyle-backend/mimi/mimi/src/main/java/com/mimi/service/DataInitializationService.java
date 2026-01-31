@@ -3,6 +3,7 @@ package com.mimi.service;
 import com.mimi.domain.Category;
 import com.mimi.domain.Product;
 import com.mimi.domain.User;
+import com.mimi.domain.Voucher;
 import com.mimi.domain.ProductImage;
 import com.mimi.domain.enums.ProductStatus;
 import com.mimi.domain.enums.RentUnit;
@@ -11,11 +12,13 @@ import com.mimi.domain.enums.TradeType;
 import com.mimi.repository.CategoryRepository;
 import com.mimi.repository.ProductRepository;
 import com.mimi.repository.UserRepository;
+import com.mimi.repository.VoucherRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +29,7 @@ public class DataInitializationService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
+    private final VoucherRepository voucherRepository;
 
     @PostConstruct
     public void initializeData() {
@@ -191,6 +195,30 @@ public class DataInitializationService {
                     true));
             product6.setImages(images6);
             productRepository.save(product6);
+        }
+
+        // Sample vouchers
+        if (voucherRepository.count() == 0) {
+            Voucher v1 = new Voucher();
+            v1.setCode("GIAM50K");
+            v1.setDiscountValue(new BigDecimal("50000"));
+            v1.setMinOrderValue(new BigDecimal("200000"));
+            v1.setExpirationDate(LocalDateTime.now().plusMonths(3));
+            voucherRepository.save(v1);
+
+            Voucher v2 = new Voucher();
+            v2.setCode("FREESHIP");
+            v2.setDiscountValue(new BigDecimal("30000"));
+            v2.setMinOrderValue(new BigDecimal("300000"));
+            v2.setExpirationDate(LocalDateTime.now().plusMonths(1));
+            voucherRepository.save(v2);
+
+            Voucher v3 = new Voucher();
+            v3.setCode("TET2025");
+            v3.setDiscountValue(new BigDecimal("100000"));
+            v3.setMinOrderValue(new BigDecimal("500000"));
+            v3.setExpirationDate(LocalDateTime.now().plusMonths(6));
+            voucherRepository.save(v3);
         }
     }
 }

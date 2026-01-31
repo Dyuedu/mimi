@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ChevronRight, Minus, Plus } from 'lucide-react';
 import Layout from '../components/layout/Layout';
 import { getProductById } from '../api/product';
+import { useCart } from '../context/CartContext';
 import sterilizerImg from '../assets/img-product/may-tiet-trung-binh-sua-co-say-kho-bang-tia-uv-spectra-1.jpg';
 import pumpImg from '../assets/img-product/May-hut-sua-dien-doi-Resonance-3-Fb1160VN-3.jpeg';
 import cribImg from '../assets/img-product/top-5-thuong-hieu-noi-cho-be-duoc-ua-chuong-nhat-hien-nay-2020-1595675197.png';
@@ -20,6 +21,7 @@ export default function ProductDetailPage() {
   const [selectedSize, setSelectedSize] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('description');
+  const { addToCart, isInCart } = useCart();
 
   const imageMap = {
     'Máy tiệt trùng bình sữa UV': sterilizerImg,
@@ -93,9 +95,20 @@ export default function ProductDetailPage() {
   };
 
   const handleAddToCart = () => {
-    // TODO: Implement add to cart functionality
-    alert('Chức năng thêm vào giỏ hàng sẽ được triển khai sau');
+    if (!product) return;
+    addToCart({
+      productId: product.id,
+      product,
+      quantity,
+      colorLabel: colors[selectedColor] ? `Màu ${selectedColor + 1}` : '',
+      sizeLabel: sizes[selectedSize] || '',
+      colorIndex: selectedColor,
+      sizeIndex: selectedSize,
+      imageSrc: getProductImageSrc(product),
+    });
   };
+
+  const addedToCart = isInCart(product?.id, selectedColor, selectedSize);
 
   if (loading) {
     return (
@@ -218,10 +231,16 @@ export default function ProductDetailPage() {
               </div>
             </div>
 
-            {/* Add to Cart Button */}
-            <button className="add-to-cart-btn" onClick={handleAddToCart}>
-              Thêm vào giỏ hàng
-            </button>
+            {/* Add to Cart / Checkout Button */}
+            {addedToCart ? (
+              <button className="add-to-cart-btn checkout-btn" onClick={() => navigate('/checkout')}>
+                Thanh toán
+              </button>
+            ) : (
+              <button className="add-to-cart-btn" onClick={handleAddToCart}>
+                Thêm vào giỏ hàng
+              </button>
+            )}
           </div>
         </div>
 
