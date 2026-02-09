@@ -1,5 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081/api';
-
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export async function getUserProducts(userId) {
   const response = await fetch(`${API_BASE_URL}/products/user/${userId}`, {
     method: 'GET',

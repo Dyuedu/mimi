@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -64,48 +66,85 @@ public class UserController {
         }
 
         User user = opt.get();
-        if (request.getFullName() != null) user.setFullName(request.getFullName());
-        if (request.getBirthday() != null) user.setBirthday(request.getBirthday());
-        if (request.getPhoneNumber() != null) user.setPhoneNumber(request.getPhoneNumber());
-        if (request.getAddress() != null) user.setAddress(request.getAddress());
+        if (request.getFullName() != null)
+            user.setFullName(request.getFullName());
+        if (request.getBirthday() != null)
+            user.setBirthday(request.getBirthday());
+        if (request.getPhoneNumber() != null)
+            user.setPhoneNumber(request.getPhoneNumber());
+        if (request.getAddress() != null)
+            user.setAddress(request.getAddress());
 
         User saved = userRepository.save(user);
         return ResponseEntity.ok(toResponse(saved));
     }
 
     /**
-     * Upload avatar file, save it under ./uploads/avatars, and store filename in DB (avatarUrl).
+     * Upload avatar file, save it under ./uploads/avatars, and store filename in DB
+     * (avatarUrl).
      */
+    @Value("${file.upload-dir}")
+    private String uploadDir;
+
     @PostMapping("/{id}/avatar")
-    public ResponseEntity<?> uploadAvatar(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
-        Optional<User> opt = userRepository.findById(id);
-        if (opt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+    public ResponseEntity<?> uploadAvatar(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file) {
+
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("User not found");
         }
+
         if (file == null || file.isEmpty()) {
-            return ResponseEntity.badRequest().body("File is required");
+            return ResponseEntity.badRequest()
+                    .body("File is required");
         }
-
-        String originalName = file.getOriginalFilename();
-        String ext = StringUtils.getFilenameExtension(originalName);
-        String safeExt = (ext == null || ext.isBlank()) ? "png" : ext;
-        String filename = "avatar_" + id + "_" + UUID.randomUUID() + "." + safeExt;
-
-        Path uploadDir = Paths.get("uploads", "avatars");
-        Path targetPath = uploadDir.resolve(filename);
 
         try {
-            Files.createDirectories(uploadDir);
-            Files.write(targetPath, file.getBytes());
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Upload failed");
+            User user = optionalUser.get();
+
+            /* ========= 1. Chuẩn bị folder ========= */
+            Path avatarDir = Paths.get(uploadDir, "avatars")
+                    .toAbsolutePath()
+                    .normalize();
+
+            Files.createDirectories(avatarDir);
+
+            /* ========= 2. Tạo filename ========= */
+            String original = file.getOriginalFilename();
+            String ext = Optional.ofNullable(StringUtils.getFilenameExtension(original))
+                    .filter(e -> !e.isBlank())
+                    .orElse("png");
+
+            String filename = "avatar_" + id + "_"
+                    + UUID.randomUUID().toString().substring(0, 8)
+                    + "." + ext;
+
+            Path target = avatarDir.resolve(filename);
+
+            /* ========= 3. Xóa avatar cũ ========= */
+            if (user.getAvatarUrl() != null) {
+                Path oldAvatar = avatarDir.resolve(user.getAvatarUrl());
+                Files.deleteIfExists(oldAvatar);
+            }
+
+            /* ========= 4. Lưu file ========= */
+            Files.copy(file.getInputStream(), target,
+                    StandardCopyOption.REPLACE_EXISTING);
+
+            /* ========= 5. Save DB ========= */
+            user.setAvatarUrl(filename);
+            userRepository.save(user);
+
+            return ResponseEntity.ok(toResponse(user));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Upload avatar failed: " + e.getMessage());
         }
-
-        User user = opt.get();
-        user.setAvatarUrl(filename);
-        User saved = userRepository.save(user);
-
-        return ResponseEntity.ok(toResponse(saved));
     }
 
     private UserResponse toResponse(User user) {
@@ -122,4 +161,3 @@ public class UserController {
                 .build();
     }
 }
-

@@ -4,6 +4,7 @@ import { Upload, X, Plus } from 'lucide-react';
 import Layout from '../components/layout/Layout';
 import { getUserProducts, deleteProduct, updateProduct, uploadProductImages, saveProductImageNames, deleteProductImage } from '../api/product';
 import { API_ORIGIN } from '../api/config';
+import { API_BASE_URL } from '../api/config';
 import sterilizerImg from '../assets/img-product/may-tiet-trung-binh-sua-co-say-kho-bang-tia-uv-spectra-1.jpg';
 import pumpImg from '../assets/img-product/May-hut-sua-dien-doi-Resonance-3-Fb1160VN-3.jpeg';
 import cribImg from '../assets/img-product/top-5-thuong-hieu-noi-cho-be-duoc-ua-chuong-nhat-hien-nay-2020-1595675197.png';
@@ -169,19 +170,19 @@ const ProductManagementPage = () => {
 
   const handleEditImageUpload = async (e) => {
     const files = Array.from(e.target.files);
-    
+
     if (files.length === 0) return;
-    
+
     try {
       // Upload ảnh lên server và lưu vào thư mục frontend
       const uploadedFilenames = await uploadProductImages(files);
-      
+
       setEditFormData(prev => ({
         ...prev,
         images: [...prev.images, ...files],
         imageFilenames: [...(prev.imageFilenames || []), ...uploadedFilenames]
       }));
-      
+
       console.log('Đã upload thành công:', uploadedFilenames);
     } catch (error) {
       console.error('Lỗi khi upload ảnh:', error);
@@ -202,19 +203,19 @@ const ProductManagementPage = () => {
     if (!window.confirm('Bạn có chắc chắn muốn xóa ảnh này? Hành động này không thể hoàn tác.')) {
       return;
     }
-    
+
     try {
       // Xóa ảnh khỏi server và database
       await deleteProductImage(editingProduct.id, imageToRemove);
-      
+
       // Cập nhật state để remove ảnh khỏi UI
       setEditFormData(prev => ({
         ...prev,
-        existingImages: prev.existingImages?.filter(img => 
+        existingImages: prev.existingImages?.filter(img =>
           (typeof img === 'string' ? img : img.imageUrl) !== imageToRemove
         ) || []
       }));
-      
+
       console.log('Đã xóa ảnh thành công:', imageToRemove);
     } catch (error) {
       console.error('Lỗi khi xóa ảnh:', error);
@@ -279,7 +280,7 @@ const ProductManagementPage = () => {
       };
 
       await updateProduct(editingProduct.id, productData);
-      
+
       // Lưu ảnh mới nếu có
       if (editFormData.imageFilenames && editFormData.imageFilenames.length > 0) {
         try {
@@ -291,9 +292,9 @@ const ProductManagementPage = () => {
           return;
         }
       }
-      
+
       setEditSuccessMessage('Sản phẩm đã được cập nhật thành công!');
-      
+
       // Reload products after 1 second
       setTimeout(() => {
         loadProducts();
@@ -317,23 +318,25 @@ const ProductManagementPage = () => {
   };
 
   const getProductImageSrc = (product) => {
-    // Ưu tiên ảnh từ database (tên file trong public/img-product/)
     if (Array.isArray(product.images) && product.images.length > 0) {
       const imageUrl = product.images[0];
+
+      // Nếu backend trả về filename string
       if (typeof imageUrl === 'string' && !imageUrl.includes('src/assets')) {
-        return `http://localhost:8081/api/products/images/${imageUrl}`;
+        return `${API_BASE_URL}/products/images/${imageUrl}`;
       }
+
+      // Nếu backend trả object { imageUrl: "abc.jpg" }
       if (imageUrl?.imageUrl && !imageUrl.imageUrl.includes('src/assets')) {
-        return `http://localhost:8081/api/products/images/${imageUrl.imageUrl}`;
+        return `${API_BASE_URL}/products/images/${imageUrl.imageUrl}`;
       }
     }
 
-    // Fallback: dùng imageMap nếu có
+    // fallback local asset mapping
     if (imageMap[product.name]) return imageMap[product.name];
-
-    // Fallback cuối cùng: placeholder
     return '/api/placeholder/300/200';
   };
+
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat('vi-VN').format(price) + 'đ';
@@ -352,7 +355,7 @@ const ProductManagementPage = () => {
   const getRentUnitText = (unit) => {
     const unitMap = {
       'DAY': 'ngày',
-      'WEEK': 'tuần', 
+      'WEEK': 'tuần',
       'MONTH': 'tháng',
       'YEAR': 'năm'
     };
@@ -442,36 +445,36 @@ const ProductManagementPage = () => {
                   </div>
 
                   <h3 className="product-name">{product.name}</h3>
-                
+
                   <div className="product-price">
-                  {product.tradeType === 'BUY_ONLY' && product.buyPrice && (
-                    <span className="sell-price">{formatPrice(product.buyPrice)}</span>
-                  )}
-                  {product.tradeType === 'RENT_ONLY' && product.rentPrice && (
-                    <span className="rent-price">
-                      {formatPrice(product.rentPrice)}/{getRentUnitText(product.rentUnit)}
-                    </span>
-                  )}
-                  {product.tradeType === 'BOTH' && (
-                    <>
-                      {product.buyPrice && <span className="sell-price">{formatPrice(product.buyPrice)}</span>}
-                      {product.rentPrice && (
-                        <span className="rent-price">
-                          {formatPrice(product.rentPrice)}/{getRentUnitText(product.rentUnit)}
-                        </span>
-                      )}
-                    </>
-                  )}
-                </div>
+                    {product.tradeType === 'BUY_ONLY' && product.buyPrice && (
+                      <span className="sell-price">{formatPrice(product.buyPrice)}</span>
+                    )}
+                    {product.tradeType === 'RENT_ONLY' && product.rentPrice && (
+                      <span className="rent-price">
+                        {formatPrice(product.rentPrice)}/{getRentUnitText(product.rentUnit)}
+                      </span>
+                    )}
+                    {product.tradeType === 'BOTH' && (
+                      <>
+                        {product.buyPrice && <span className="sell-price">{formatPrice(product.buyPrice)}</span>}
+                        {product.rentPrice && (
+                          <span className="rent-price">
+                            {formatPrice(product.rentPrice)}/{getRentUnitText(product.rentUnit)}
+                          </span>
+                        )}
+                      </>
+                    )}
+                  </div>
 
                   <div className="product-actions">
-                    <button 
+                    <button
                       className="btn-edit"
                       onClick={() => handleEdit(product)}
                     >
                       ✏️ Chỉnh sửa
                     </button>
-                    <button 
+                    <button
                       className="btn-delete"
                       onClick={() => handleDelete(product.id)}
                     >
@@ -487,20 +490,20 @@ const ProductManagementPage = () => {
       </main>
 
       {!isInsideProductsLayout && (
-      <nav className="bottom-nav">
-        <a href="/revenue" className="nav-item">
-          <span className="nav-icon">💰</span>
-          <span className="nav-text">Doanh thu</span>
-        </a>
-        <a href="/products" className="nav-item active">
-          <span className="nav-icon">🛒</span>
-          <span className="nav-text">Đang bán</span>
-        </a>
-        <a href="/add" className="nav-item">
-          <span className="nav-icon">➕</span>
-          <span className="nav-text">Thêm mới</span>
-        </a>
-      </nav>
+        <nav className="bottom-nav">
+          <a href="/revenue" className="nav-item">
+            <span className="nav-icon">💰</span>
+            <span className="nav-text">Doanh thu</span>
+          </a>
+          <a href="/products" className="nav-item active">
+            <span className="nav-icon">🛒</span>
+            <span className="nav-text">Đang bán</span>
+          </a>
+          <a href="/add" className="nav-item">
+            <span className="nav-icon">➕</span>
+            <span className="nav-text">Thêm mới</span>
+          </a>
+        </nav>
       )}
 
       {/* Edit Product Modal */}
@@ -694,7 +697,7 @@ const ProductManagementPage = () => {
               {/* Hình ảnh sản phẩm */}
               <section className="form-section">
                 <h3 className="section-title">Hình ảnh sản phẩm</h3>
-                
+
                 {/* Ảnh hiện tại */}
                 {editFormData.existingImages && editFormData.existingImages.length > 0 && (
                   <div className="existing-images">
@@ -704,7 +707,7 @@ const ProductManagementPage = () => {
                         const imageUrl = typeof img === 'string' ? img : img.imageUrl;
                         return (
                           <div key={`existing-${index}`} className="image-preview-item">
-                            <button 
+                            <button
                               type="button"
                               className="remove-image-btn"
                               onClick={() => removeExistingImage(imageUrl)}
@@ -712,8 +715,8 @@ const ProductManagementPage = () => {
                             >
                               <X size={12} />
                             </button>
-                            <img 
-                              src={getProductImageSrc({images: [img]})}
+                            <img
+                              src={getProductImageSrc({ images: [img] })}
                               alt={`Existing ${index + 1}`}
                               className="preview-image"
                             />
@@ -744,7 +747,7 @@ const ProductManagementPage = () => {
                       <Upload size={32} className="upload-icon" />
                       <div className="upload-text">
                         <div>Kéo & thả nhiều ảnh vào đây hoặc bấm để chọn</div>
-                        <div style={{fontSize: '12px', color: '#9ca3af', marginTop: '4px'}}>
+                        <div style={{ fontSize: '12px', color: '#9ca3af', marginTop: '4px' }}>
                           Hỗ trợ JPG, PNG, GIF. Có thể chọn nhiều ảnh cùng lúc.
                         </div>
                       </div>
@@ -758,7 +761,7 @@ const ProductManagementPage = () => {
                       <div className="image-preview-grid">
                         {editFormData.images.map((file, index) => (
                           <div key={`new-${index}`} className="image-preview-item">
-                            <button 
+                            <button
                               type="button"
                               className="remove-image-btn"
                               onClick={() => removeEditImage(index)}
@@ -766,8 +769,8 @@ const ProductManagementPage = () => {
                             >
                               <X size={12} />
                             </button>
-                            <img 
-                              src={URL.createObjectURL(file)} 
+                            <img
+                              src={URL.createObjectURL(file)}
                               alt={`New Preview ${index + 1}`}
                               className="preview-image"
                             />
