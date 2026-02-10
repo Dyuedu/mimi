@@ -14,6 +14,7 @@ import {
 import loginIllustration from '../assets/login-illustration.svg';
 import { registerAccount } from '../api/auth';
 import '../styles/RegisterPage.css';
+import meVaBe from '../assets/me-va-be.jpeg';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -359,11 +360,7 @@ export default function RegisterPage() {
         <div className="register-illustration-section">
           <div className="register-illustration-card">
             <img
-              src={loginIllustration}
-              alt="Minh hoạ em bé dễ thương"
-              className="register-illustration-img"
-              loading="lazy"
-            />
+              src={meVaBe} alt="Me và Bé" className="register-illustration-image" style={{objectFit: 'cover', width: '100%', height: '100%', objectPosition:'15%center'}} />
           </div>
         </div>
       </div>

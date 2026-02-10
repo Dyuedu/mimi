@@ -4,6 +4,7 @@ import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import loginIllustration from '../assets/login-illustration.svg';
 import { loginAccount } from '../api/auth';
 import '../styles/LoginPage.css';
+import meVabe from '../assets/me-va-be.jpeg';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -227,10 +228,7 @@ export default function LoginPage() {
           <div className="illustration-content">
             <div className="illustration-card">
               <img
-                src={loginIllustration}
-                alt="Minh hoạ em bé và đồ chơi"
-                className="login-illustration-img"
-                loading="eager"
+                src={meVabe} alt="Me và Bé" className="illustration-image" style={{ objectFit: 'cover', width: '100%', height: '100%' }}
               />
             </div>
           </div>
