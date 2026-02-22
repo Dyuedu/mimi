@@ -41,7 +41,8 @@ steps:
     settings:
       host:
         from_secret: ssh_host
-      username: root
+      username: 
+        from_secret: ssh_username
       key:
         from_secret: ssh_password
       port: 22
@@ -57,7 +58,7 @@ steps:
       branch:
         - main
 
-# Drone sẽ chỉ chạy pipeline này khi bạn push code vào nhánh main
+# Drone sẽ chỉ chạy pipeline này khi push code vào nhánh main
 trigger:
   branch:
     - main
