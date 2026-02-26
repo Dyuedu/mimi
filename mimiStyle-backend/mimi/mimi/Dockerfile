@@ -17,5 +17,8 @@ WORKDIR /app
 # Copy file jar từ giai đoạn build sang
 COPY --from=build /app/target/*.jar app.jar
 
+# Thiết lập biến môi trường để kích hoạt profile 'prod'
+ENV SPRING_PROFILES_ACTIVE=prod
+
 EXPOSE 8081
 ENTRYPOINT ["java", "-jar", "app.jar"]
