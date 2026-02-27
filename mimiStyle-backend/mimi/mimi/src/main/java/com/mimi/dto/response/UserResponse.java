@@ -19,5 +19,6 @@ public class UserResponse {
     private String address;
     private String avatarUrl;
     private Role role;
+    private Integer pageViews;
 }
 

@@ -63,3 +63,14 @@ export async function uploadAvatar(id, file) {
   return data;
 }
 
+/**
+ * Lấy thống kê tổng quan hệ thống (dành cho ADMIN).
+ */
+export async function getSystemStats() {
+  const res = await fetch(`${API_BASE_URL}/users/stats`);
+  const { data } = await parseResponse(res);
+  if (!res.ok) {
+    throw new Error(typeof data === 'string' ? data : 'Không thể tải thống kê');
+  }
+  return data;
+}

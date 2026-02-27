@@ -49,6 +49,33 @@ public class UserController {
         return ResponseEntity.ok(list);
     }
 
+    /**
+     * Get system statistics (for ADMIN).
+     */
+    @GetMapping("/stats")
+    public ResponseEntity<?> getSystemStats() {
+        try {
+            long totalUsers = userRepository.count();
+            long totalPageViews = userRepository.findAll().stream()
+                    .mapToLong(u -> u.getPageViews() != null ? u.getPageViews() : 0)
+                    .sum();
+            long activeUsers = userRepository.findAll().stream()
+                    .filter(u -> u.getPageViews() != null && u.getPageViews() > 0)
+                    .count();
+
+            var stats = new java.util.HashMap<String, Object>();
+            stats.put("totalUsers", totalUsers);
+            stats.put("totalPageViews", totalPageViews);
+            stats.put("activeUsers", activeUsers);
+            stats.put("totalOrders", 0); // TODO: Implement when Order stats available
+
+            return ResponseEntity.ok(stats);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to get stats: " + e.getMessage());
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getUser(@PathVariable Long id) {
         Optional<User> opt = userRepository.findById(id);
@@ -158,6 +185,7 @@ public class UserController {
                 .address(user.getAddress())
                 .avatarUrl(user.getAvatarUrl())
                 .role(user.getRole())
+                .pageViews(user.getPageViews())
                 .build();
     }
 }

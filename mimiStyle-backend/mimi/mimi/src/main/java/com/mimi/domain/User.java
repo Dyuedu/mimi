@@ -51,6 +51,9 @@ public class User {
     @Column(nullable = false)
     private Role role = Role.USER;
     
+    @Column(name = "page_views")
+    private Integer pageViews = 0;
+    
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
