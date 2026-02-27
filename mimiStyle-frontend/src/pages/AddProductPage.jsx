@@ -20,6 +20,7 @@ const AddProductPage = () => {
     description: '',
     price: '',
     rentPrice: '',
+    deposit: '', // Tiền cọc cho thuê
     rentUnit: 'MONTH',
     address: '',
     images: [],
@@ -114,6 +115,9 @@ const AddProductPage = () => {
       if (!formData.rentPrice || parseFloat(formData.rentPrice) <= 0) {
         newErrors.rentPrice = 'Giá thuê phải lớn hơn 0';
       }
+      if (!formData.deposit || parseFloat(formData.deposit) <= 0) {
+        newErrors.deposit = 'Tiền cọc phải lớn hơn 0';
+      }
     }
 
     setErrors(newErrors);
@@ -143,6 +147,7 @@ const AddProductPage = () => {
         description: formData.description.trim(),
         buyPrice: formData.tradeType === 'RENT_ONLY' ? null : parseFloat(formData.price) || null,
         rentPrice: formData.tradeType === 'BUY_ONLY' ? null : parseFloat(formData.rentPrice) || null,
+        deposit: formData.tradeType === 'BUY_ONLY' ? null : parseFloat(formData.deposit) || null,
         rentUnit: formData.tradeType === 'BUY_ONLY' ? null : formData.rentUnit,
         tradeType: formData.tradeType,
         conditionPercentage: getConditionPercentage(formData.condition),
@@ -424,6 +429,24 @@ const AddProductPage = () => {
                       min="0"
                     />
                     {errors.rentPrice && <div className="field-error">{errors.rentPrice}</div>}
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">
+                      <span className="required">*</span> Tiền cọc (VNĐ)
+                    </label>
+                    <input
+                      type="number"
+                      name="deposit"
+                      value={formData.deposit}
+                      onChange={handleInputChange}
+                      placeholder="Ví dụ: 1000000"
+                      className={`form-input ${errors.deposit ? 'error' : ''}`}
+                      min="0"
+                    />
+                    {errors.deposit && <div className="field-error">{errors.deposit}</div>}
+                    <div style={{fontSize: '12px', color: '#6b7280', marginTop: '4px'}}>
+                      💡 Tiền cọc sẽ được cộng vào tổng thanh toán khi thuê
+                    </div>
                   </div>
                   <div className="form-group">
                     <label className="form-label">Đơn vị thời gian</label>

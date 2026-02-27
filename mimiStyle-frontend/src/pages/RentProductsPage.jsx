@@ -108,8 +108,13 @@ export default function RentProductsPage() {
                         </div>
                         <h3 className="product-name">{product.name}</h3>
                         <div className="product-prices">
-                          <div className="price-rent">
-                            {formatPrice(product.rentPrice)}/{getRentUnitText(product.rentUnit)}
+                          <div className="price-rent-group">
+                            <div className="price-rent">
+                              {formatPrice(product.rentPrice)}/{getRentUnitText(product.rentUnit)}
+                            </div>
+                            {product.deposit && (
+                              <div className="price-deposit">+ Cọc: {formatPrice(product.deposit)}</div>
+                            )}
                           </div>
                           {product.buyPrice > 0 && (
                             <div className="price-main" style={{ fontSize: '0.9em', color: '#64748b' }}>

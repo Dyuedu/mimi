@@ -366,9 +366,21 @@
   margin-bottom: 2px;
 }
 
+.price-rent-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .price-rent {
   font-size: 0.875rem;
   color: #6b7280;
+}
+
+.price-deposit {
+  font-size: 0.75rem;
+  color: #f59e0b;
+  font-weight: 500;
 }
 
 .product-actions {

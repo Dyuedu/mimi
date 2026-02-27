@@ -134,6 +134,32 @@
   color: #2563eb;
 }
 
+.rent-price-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rent-price-main {
+  font-size: 32px;
+  font-weight: 700;
+  color: #2563eb;
+}
+
+.deposit-info {
+  font-size: 18px;
+  font-weight: 500;
+  color: #f59e0b;
+}
+
+.total-rent-info {
+  font-size: 20px;
+  font-weight: 600;
+  color: #059669;
+  padding-top: 8px;
+  border-top: 1px solid #e5e7eb;
+}
+
 /* Product Options */
 .product-option-group {
   display: flex;

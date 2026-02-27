@@ -88,12 +88,16 @@ export function CartProvider({ children }) {
           (i.sizeIndex === sizeIndex || (i.sizeIndex == null && sizeIndex == null))
       );
       const price = product?.buyPrice ?? product?.rentPrice ?? product?.price ?? 0;
+      const deposit = product?.deposit ?? 0;
       const entry = {
         productId,
         product: {
           id: product?.id ?? productId,
           name: product?.name ?? '',
           price,
+          deposit,
+          buyPrice: product?.buyPrice,
+          rentPrice: product?.rentPrice,
           imageSrc: imageSrc ?? (product?.images?.[0] ? (typeof product.images[0] === 'string' ? `/img-product/${product.images[0]}` : `/img-product/${product.images[0].imageUrl}`) : null),
         },
         quantity,

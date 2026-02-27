@@ -177,7 +177,21 @@ export default function ProductDetailPage() {
             </div>
 
             <div className="product-price">
-              {product.buyPrice ? formatPrice(product.buyPrice) : formatPrice(product.rentPrice || 0)}
+              {product.buyPrice ? (
+                formatPrice(product.buyPrice)
+              ) : (
+                <div className="rent-price-info">
+                  <div className="rent-price-main">{formatPrice(product.rentPrice || 0)}</div>
+                  {product.deposit && (
+                    <div className="deposit-info">
+                      + Cọc: {formatPrice(product.deposit)}
+                    </div>
+                  )}
+                  <div className="total-rent-info">
+                    Tổng thanh toán: {formatPrice((product.rentPrice || 0) + (product.deposit || 0))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Color Selection */}

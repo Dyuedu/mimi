@@ -162,9 +162,14 @@ export default function HomePage() {
               <div className="price-main">{formatPrice(product.buyPrice)}</div>
             ) : null}
             {(product.tradeType === 'BOTH' || product.tradeType === 'RENT_ONLY') && product.rentPrice ? (
-              <div className="price-rent">
-                {formatPrice(product.rentPrice)}/
-                {product.rentUnit === 'MONTH' ? 'tháng' : product.rentUnit === 'WEEK' ? 'tuần' : 'ngày'}
+              <div className="price-rent-group">
+                <div className="price-rent">
+                  {formatPrice(product.rentPrice)}/
+                  {product.rentUnit === 'MONTH' ? 'tháng' : product.rentUnit === 'WEEK' ? 'tuần' : 'ngày'}
+                </div>
+                {product.deposit && (
+                  <div className="price-deposit">+ Cọc: {formatPrice(product.deposit)}</div>
+                )}
               </div>
             ) : null}
           </div>

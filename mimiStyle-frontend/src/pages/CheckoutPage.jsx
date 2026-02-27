@@ -43,7 +43,13 @@ export default function CheckoutPage() {
     return province?.districts ?? [];
   }, [provincesWithDistricts, form.provinceCode]);
 
-  const subtotal = items.reduce((s, i) => s + (i.product?.price ?? 0) * i.quantity, 0);
+  const subtotal = items.reduce((s, i) => {
+    const itemPrice = i.product?.price ?? 0;
+    const itemDeposit = i.product?.deposit ?? 0;
+    // Nếu là sản phẩm cho thuê (có deposit), tính cả deposit
+    const totalItemPrice = itemDeposit > 0 ? itemPrice + itemDeposit : itemPrice;
+    return s + totalItemPrice * i.quantity;
+  }, 0);
   const discount = selectedVoucher ? Number(selectedVoucher.discountValue) : 0;
   const total = Math.max(0, subtotal - discount + SHIPPING_FEE);
 
@@ -255,13 +261,21 @@ export default function CheckoutPage() {
               {items.map((item) => {
                 const imgSrc = item.product?.imageSrc || 'https://via.placeholder.com/80x80/f0f0f0/666?text=SP';
                 const variantText = [item.colorLabel, item.sizeLabel].filter(Boolean).join(' / ') || '';
-                const lineTotal = (item.product?.price ?? 0) * item.quantity;
+                const itemPrice = item.product?.price ?? 0;
+                const itemDeposit = item.product?.deposit ?? 0;
+                const totalItemPrice = itemDeposit > 0 ? itemPrice + itemDeposit : itemPrice;
+                const lineTotal = totalItemPrice * item.quantity;
                 return (
                   <div key={`${item.productId}-${item.colorIndex}-${item.sizeIndex}`} className="checkout-product-item">
                     <img className="checkout-product-img" src={imgSrc} alt={item.product?.name} />
                     <div className="checkout-product-info">
                       <div className="checkout-product-name">{item.product?.name}</div>
                       {variantText && <div className="checkout-product-variant">{variantText}</div>}
+                      {itemDeposit > 0 && (
+                        <div className="checkout-product-deposit">
+                          Giá thuê: {formatPrice(itemPrice)} + Cọc: {formatPrice(itemDeposit)}
+                        </div>
+                      )}
                       <div className="checkout-product-row">
                         <div className="checkout-product-qty">
                           <button
