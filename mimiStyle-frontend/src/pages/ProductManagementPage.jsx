@@ -24,10 +24,12 @@ const ProductManagementPage = () => {
   const [editFormData, setEditFormData] = useState({
     name: '',
     description: '',
+    specifications: '',
     tradeType: 'BUY_ONLY',
     condition: 'NEW',
     price: '',
     rentPrice: '',
+    deposit: '',
     rentUnit: 'MONTH',
     address: '',
     status: 'ACTIVE',
@@ -92,10 +94,12 @@ const ProductManagementPage = () => {
     setEditFormData({
       name: product.name || '',
       description: product.description || '',
+      specifications: product.specifications || '',
       tradeType: product.tradeType || 'BUY_ONLY',
       condition: getConditionFromPercentage(product.conditionPercentage),
       price: product.buyPrice ? product.buyPrice.toString() : '',
       rentPrice: product.rentPrice ? product.rentPrice.toString() : '',
+      deposit: product.deposit ? product.deposit.toString() : '',
       rentUnit: product.rentUnit || 'MONTH',
       address: product.addressContact || '',
       status: product.status || 'ACTIVE',
@@ -115,10 +119,12 @@ const ProductManagementPage = () => {
     setEditFormData({
       name: '',
       description: '',
+      specifications: '',
       tradeType: 'BUY_ONLY',
       condition: 'NEW',
       price: '',
       rentPrice: '',
+      deposit: '',
       rentUnit: 'MONTH',
       address: '',
       status: 'ACTIVE',
@@ -248,6 +254,9 @@ const ProductManagementPage = () => {
       if (!editFormData.rentPrice || parseFloat(editFormData.rentPrice) <= 0) {
         newErrors.rentPrice = 'Giá thuê phải lớn hơn 0';
       }
+      if (!editFormData.deposit || parseFloat(editFormData.deposit) <= 0) {
+        newErrors.deposit = 'Tiền cọc phải lớn hơn 0';
+      }
     }
 
     setEditErrors(newErrors);
@@ -270,8 +279,10 @@ const ProductManagementPage = () => {
       const productData = {
         name: editFormData.name.trim(),
         description: editFormData.description.trim(),
+        specifications: editFormData.specifications.trim() || null,
         buyPrice: editFormData.tradeType === 'RENT_ONLY' ? null : parseFloat(editFormData.price) || null,
         rentPrice: editFormData.tradeType === 'BUY_ONLY' ? null : parseFloat(editFormData.rentPrice) || null,
+        deposit: editFormData.tradeType === 'BUY_ONLY' ? null : parseFloat(editFormData.deposit) || null,
         rentUnit: editFormData.tradeType === 'BUY_ONLY' ? null : editFormData.rentUnit,
         tradeType: editFormData.tradeType,
         conditionPercentage: getConditionPercentage(editFormData.condition),
@@ -641,6 +652,20 @@ const ProductManagementPage = () => {
                   {editErrors.description && <div className="field-error">{editErrors.description}</div>}
                 </div>
 
+                <div className="form-group">
+                  <label className="form-label">
+                    Thông số kỹ thuật
+                  </label>
+                  <textarea
+                    name="specifications"
+                    value={editFormData.specifications}
+                    onChange={handleEditInputChange}
+                    className="form-textarea"
+                    rows={6}
+                    placeholder="Ví dụ:&#10;• Kích thước: D89 x R46.5 x C99.5 (cm)&#10;• Trọng lượng: 6.2 kg&#10;• Chất liệu: Nhôm cao cấp"
+                  />
+                </div>
+
                 <div className="price-group">
                   {(editFormData.tradeType === 'BUY_ONLY' || editFormData.tradeType === 'BOTH') && (
                     <div className="form-group">
@@ -674,6 +699,20 @@ const ProductManagementPage = () => {
                           min="0"
                         />
                         {editErrors.rentPrice && <div className="field-error">{editErrors.rentPrice}</div>}
+                      </div>
+                      <div className="form-group">
+                        <label className="form-label">
+                          <span className="required">*</span> Tiền cọc (VNĐ)
+                        </label>
+                        <input
+                          type="number"
+                          name="deposit"
+                          value={editFormData.deposit}
+                          onChange={handleEditInputChange}
+                          className={`form-input ${editErrors.deposit ? 'error' : ''}`}
+                          min="0"
+                        />
+                        {editErrors.deposit && <div className="field-error">{editErrors.deposit}</div>}
                       </div>
                       <div className="form-group">
                         <label className="form-label">Đơn vị thời gian</label>
